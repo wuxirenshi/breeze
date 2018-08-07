@@ -8,6 +8,9 @@ from flask import request
 from webargs.flaskparser import FlaskParser
 from marshmallow.fields import Field
 
+from breeze.exception.util import raise_user_exc
+from breeze.exception.error_code import INVALID_ARGS
+
 logger = logging.getLogger(__name__)
 
 
@@ -40,4 +43,11 @@ class ArgsParser(FlaskParser):
         return self.parse(args_spec, req, *args, **kwargs)
 
 args_parser = ArgsParser()
+
+
+@args_parser.error_handler
+def handle_error(error):
+    logger.error('invalid args!ERROR MESSAGE:{}'.format(error))
+    raise_user_exc(INVALID_ARGS)
+
 
