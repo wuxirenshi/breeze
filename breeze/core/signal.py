@@ -38,5 +38,5 @@ def signal(app):
     request_started.connect(log_request, app)
     request_finished.connect(log_response, app)
     got_request_exception.connect(log_exception, app)
-    user_logged_in(track_login, app)
-    user_logged_out(track_logout, app)
+    # user_logged_in(track_login, app)
+    # user_logged_out(track_logout, app)
