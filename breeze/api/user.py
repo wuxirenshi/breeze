@@ -4,9 +4,12 @@ from __future__ import absolute_import, division, print_function
 
 from flask import Blueprint
 from flask_login import login_required
+from breeze.model.user import User
 from breeze.api.handler import user as user_handler
+from flask_httpauth import HTTPTokenAuth
 
 user_bp = Blueprint('user', __name__, url_prefix='user')
+auth = HTTPTokenAuth()
 
 
 @user_bp.route('/login', method=['GET'])
@@ -24,3 +27,7 @@ def logout():
 def register():
     return user_handler.register()
 
+
+@auth.verify_token
+def verify_token(token):
+    return User.verify_auth_token(token)

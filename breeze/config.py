@@ -15,3 +15,5 @@ MYSQL = {
         'database': 'breeze'
     },
 }
+
+SECRET_KEY = 'the quick brown fox jumps over the lazy dog'
