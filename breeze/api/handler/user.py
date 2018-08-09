@@ -3,7 +3,6 @@
 from __future__ import absolute_import, division, print_function
 
 from marshmallow.fields import Str
-from flask_login import login_user, logout_user
 from flask import g
 from breeze.utils.http import args_parser
 from breeze.model.user import User
@@ -22,15 +21,12 @@ def login():
     if user:
         verify = user.verify_password(password)
         if verify:
-            login_user(user)
-            g.user = user
             token = user.generate_auth_token()
             return {'code': 200, 'msg': u'登录成功', 'token': token}
     return {'code': 400, 'msg': u'账号或密码错误'}
 
 
 def logout():
-    logout_user()
     return {'code': 200, 'msg': u'注销成功'}
 
 
@@ -48,3 +44,15 @@ def register():
         return {'code': 400, 'msg': u'账号已存在'}
     User.add(account, password)
     return {'code': 200, 'msg': u'账号注册成功'}
+
+
+def get_user_info():
+    token_args = {
+        'token': Str(required=True),
+    }
+    args = args_parser.parse(token_args)
+    token = args.get('token')
+    user = User.get_user_by_token(token)
+    if user:
+        return user.to_dict()
+    return

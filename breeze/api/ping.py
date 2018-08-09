@@ -14,7 +14,7 @@ def ping():
     return 'pong'
 
 
-@ping_bp.route('/ping/test')
+@ping_bp.route('/ping/test', methods=['POST'])
 def test_ping():
     test_args = {
         'name': Str(required=True),

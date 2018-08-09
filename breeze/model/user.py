@@ -33,11 +33,27 @@ class User(ModelBase, BreezeModel, UserMixin):
         self.password_hash = generate_password_hash(password)
 
     def verify_password(self, password):
-        return check_password_hash(password, self.password_hash)
+        return check_password_hash(self.password_hash, password)
 
     def generate_auth_token(self, expiration=6000):
         s = TimedJSONWebSignatureSerializer(SECRET_KEY, expires_in=expiration)
         return s.dumps((self.id, self.account, self.role, self.active))
+
+    @classmethod
+    def get_user_by_id(cls, user_id):
+        return DBSession().query(cls).filter(cls.id == user_id).first()
+
+    @classmethod
+    def get_user_by_token(cls, token):
+        s = TimedJSONWebSignatureSerializer(SECRET_KEY)
+        try:
+            user_id, account, role, active = s.loads(token)
+        except SignatureExpired:
+            return False
+        except BadSignature:
+            return False
+        user = User.get_user_by_id(user_id)
+        return user
 
     @staticmethod
     def verify_auth_token(token):
@@ -48,7 +64,7 @@ class User(ModelBase, BreezeModel, UserMixin):
             return False
         except BadSignature:
             return False
-        user = User.query.get(user_id)
+        user = User.get_user_by_id(user_id)
         if user:
             return True
         return False

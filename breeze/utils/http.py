@@ -42,6 +42,7 @@ class ArgsParser(FlaskParser):
         args_spec = self.all_args_spec(req, *args, **kwargs)
         return self.parse(args_spec, req, *args, **kwargs)
 
+
 args_parser = ArgsParser()
 
 
