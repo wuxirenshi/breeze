@@ -7,6 +7,7 @@ from sqlalchemy import func
 from sqlalchemy.orm import relationship, backref
 from flask_login import UserMixin
 from breeze.config import SECRET_KEY
+from . import db_commit
 from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import (
     TimedJSONWebSignatureSerializer,
@@ -78,6 +79,7 @@ class User(ModelBase, BreezeModel, UserMixin):
         return DBSession().query(cls).filter(cls.account == account).first()
 
     @classmethod
+    @db_commit
     def add(cls, account, password):
         session = DBSession()
         user = cls(account=account, active=False)

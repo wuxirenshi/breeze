@@ -6,7 +6,6 @@ from marshmallow.fields import Str
 from flask import g
 from breeze.utils.http import args_parser
 from breeze.model.user import User
-from breeze.model import db_commit
 
 
 def login():
@@ -22,15 +21,14 @@ def login():
         verify = user.verify_password(password)
         if verify:
             token = user.generate_auth_token()
-            return {'code': 200, 'msg': u'登录成功', 'token': token}
-    return {'code': 400, 'msg': u'账号或密码错误'}
+            return {'msg': u'登录成功', 'token': token}
+    return {'msg': u'账号或密码错误'}
 
 
 def logout():
-    return {'code': 200, 'msg': u'注销成功'}
+    return {'msg': u'注销成功'}
 
 
-@db_commit
 def register():
     register_args = {
         'account': Str(required=True),
@@ -41,9 +39,9 @@ def register():
     password = args.get('password')
     user = User.get_account(account)
     if user:
-        return {'code': 400, 'msg': u'账号已存在'}
+        return {'msg': u'账号已存在'}
     User.add(account, password)
-    return {'code': 200, 'msg': u'账号注册成功'}
+    return {'msg': u'账号注册成功'}
 
 
 def get_user_info():
